@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Documentacion Proyecto Final - Retos Personales</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #1f2937;
+      margin: 28px;
+      line-height: 1.5;
+      font-size: 12px;
+    }
+    h1, h2, h3 {
+      color: #0f172a;
+      margin: 0 0 8px 0;
+    }
+    h1 { font-size: 24px; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; }
+    h2 { font-size: 18px; margin-top: 20px; }
+    h3 { font-size: 14px; margin-top: 14px; }
+    ul, ol { margin: 8px 0 8px 18px; }
+    code, pre {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+    }
+    pre { padding: 10px; white-space: pre-wrap; }
+    .box {
+      border: 1px solid #94a3b8;
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f1f5f9; }
+    .small { font-size: 11px; color: #475569; }
+    .page-break { page-break-before: always; }
+  </style>
+</head>
+<body>
+  <h1>Proyecto Final - Plataforma de Retos Personales</h1>
+  <p><strong>Materia:</strong> Desarrollo Web Avanzado</p>
+  <p><strong>Framework:</strong> Laravel 12 con Breeze (Blade)</p>
+  <p><strong>Base de datos objetivo:</strong> MySQL</p>
+
+  <h2>1. Objetivo</h2>
+  <p>Construir una plataforma para crear retos personales, registrar participantes y actividades, con autenticacion, roles, CRUD completo y API REST.</p>
+
+  <h2>2. Tecnologias usadas</h2>
+  <ul>
+    <li>PHP 8.x</li>
+    <li>Laravel 12</li>
+    <li>Laravel Breeze + Blade + Tailwind</li>
+    <li>Eloquent ORM</li>
+    <li>MySQL (configurado en entorno)</li>
+    <li>SQLite (usado temporalmente durante montaje inicial)</li>
+  </ul>
+
+  <h2>3. Desarrollo paso por paso</h2>
+
+  <h3>Paso 1 - Instalacion del proyecto</h3>
+  <pre>composer create-project laravel/laravel retos-personales</pre>
+
+  <h3>Paso 2 - Configuracion de base de datos</h3>
+  <p>Se dejo la configuracion activa para MySQL.</p>
+  <pre>DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=retos_personales
+DB_USERNAME=root
+DB_PASSWORD=</pre>
+
+  <h3>Paso 3 - Instalacion de autenticacion</h3>
+  <pre>composer require laravel/breeze --dev
+php artisan breeze:install blade
+npm install
+npm run build</pre>
+
+  <h3>Paso 4 - Migraciones y modelo relacional</h3>
+  <ul>
+    <li>users (con role: admin|usuario)</li>
+    <li>retos (FK a users)</li>
+    <li>participantes (FK a users y retos)</li>
+    <li>actividades (FK a participantes)</li>
+  </ul>
+
+  <h3>Paso 5 - Modelos y relaciones</h3>
+  <p>Modelos creados: User, Reto, Participante, Actividad. En Actividad se fijo el nombre de tabla para evitar pluralizacion incorrecta.</p>
+  <pre>protected $table = 'actividades';</pre>
+
+  <h3>Paso 6 - CRUD web</h3>
+  <p>Controladores con validaciones:</p>
+  <ul>
+    <li>RetoController</li>
+    <li>ParticipanteController</li>
+    <li>ActividadController</li>
+  </ul>
+
+  <h3>Paso 7 - Roles y middleware</h3>
+  <p>Middleware personalizado EnsureRole con alias role.</p>
+  <ul>
+    <li>Rutas de retos: autenticado</li>
+    <li>Rutas de participantes y actividades: solo admin</li>
+  </ul>
+
+  <h3>Paso 8 - API REST</h3>
+  <table>
+    <thead>
+      <tr><th>Metodo</th><th>Endpoint</th><th>Descripcion</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>GET</td><td>/api/retos</td><td>Listar retos</td></tr>
+      <tr><td>POST</td><td>/api/retos</td><td>Crear reto</td></tr>
+      <tr><td>GET</td><td>/api/retos/{id}</td><td>Obtener detalle</td></tr>
+      <tr><td>PUT/PATCH</td><td>/api/retos/{id}</td><td>Actualizar</td></tr>
+      <tr><td>DELETE</td><td>/api/retos/{id}</td><td>Eliminar</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Paso 9 - Seeders de prueba</h3>
+  <p>Se cargaron usuarios, retos, participantes y actividades de demostracion.</p>
+  <pre>php artisan migrate:fresh --seed</pre>
+
+  <h2 class="page-break">4. Diagrama de base de datos</h2>
+  <div class="box">
+    <pre>USERS (1) ---- (N) RETOS
+USERS (1) ---- (N) PARTICIPANTES
+RETOS (1) ---- (N) PARTICIPANTES
+PARTICIPANTES (1) ---- (N) ACTIVIDADES</pre>
+  </div>
+  <p class="small">Archivo fuente Mermaid: docs/diagrama_base_de_datos.mmd</p>
+
+  <h2>5. Evidencia y pruebas sugeridas</h2>
+  <ol>
+    <li>Login y registro funcionando</li>
+    <li>CRUD completo de retos</li>
+    <li>Control de acceso por rol (403 para usuario normal en rutas admin)</li>
+    <li>CRUD de participantes y actividades con cuenta admin</li>
+    <li>Pruebas API en Postman</li>
+  </ol>
+
+  <h2>6. Credenciales de prueba</h2>
+  <ul>
+    <li>Admin: admin@retos.test / password</li>
+    <li>Usuario: usuario@retos.test / password</li>
+  </ul>
+
+  <h2>7. Estado final</h2>
+  <p>El proyecto cumple requisitos de framework, modelo relacional, autenticacion, roles, CRUD, API REST y seeders. La configuracion de entorno quedo preparada para MySQL.</p>
+
+  <h2>8. Comandos de ejecucion</h2>
+  <pre>php artisan migrate:fresh --seed
+php artisan serve
+npm run dev</pre>
+</body>
+</html>

@@ -1,0 +1,47 @@
+erDiagram
+    USERS ||--o{ RETOS : crea
+    USERS ||--o{ PARTICIPANTES : participa
+    RETOS ||--o{ PARTICIPANTES : tiene
+    PARTICIPANTES ||--o{ ACTIVIDADES : registra
+
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email UK
+        varchar role "admin|usuario"
+        varchar password
+        datetime created_at
+        datetime updated_at
+    }
+
+    RETOS {
+        bigint id PK
+        varchar nombre
+        text descripcion
+        int duracion_dias
+        bigint user_id FK
+        varchar estado "activo|completado|cancelado"
+        datetime created_at
+        datetime updated_at
+    }
+
+    PARTICIPANTES {
+        bigint id PK
+        bigint user_id FK
+        bigint reto_id FK
+        int progreso
+        boolean completado
+        date fecha_inicio
+        date fecha_fin
+        datetime created_at
+        datetime updated_at
+    }
+
+    ACTIVIDADES {
+        bigint id PK
+        bigint participante_id FK
+        text descripcion
+        date fecha
+        datetime created_at
+        datetime updated_at
+    }
